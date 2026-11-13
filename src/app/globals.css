@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #0b0b0a;
+  --ink-2: #141412;
+  --ink-3: #1d1c19;
+  --bone: #efe8d8;
+  --bone-dim: #b9b1a1;
+  --gold: #b8923e;
+  --gold-hi: #d4ae5c;
+  --gold-deep: #7d5f1f; /* gold for type on bone */
+  --rule: #2e2b25;
+  --wa: #25d366;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-bone: var(--bone);
+  --color-bone-dim: var(--bone-dim);
+  --color-gold: var(--gold);
+  --color-gold-hi: var(--gold-hi);
+  --color-gold-deep: var(--gold-deep);
+  --font-sans: var(--font-barlow);
+  --font-varsity: var(--font-graduate);
+  --font-display: var(--font-shoulders);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  scrollbar-color: var(--ink-3) var(--ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--font-barlow), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+p, li, dd { text-wrap: pretty; }
+::selection { background: var(--gold); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 3px; }
+
+/* Display: tall condensed uniform lettering. */
+.display {
+  font-family: var(--font-shoulders), sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Small tracked caps for labels, numbers and captions. */
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* Film grain from a real noise tile, very light. */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("/images/grain.png");
+  background-size: 160px;
+  mix-blend-mode: overlay;
+  opacity: 0.12;
+  z-index: 0;
+}
+
+/* Service board leader: the dotted line between name and description. */
+.leader {
+  height: 0;
+  border-bottom: 2px dotted rgb(184 146 62 / 0.55);
+}
+
+/* Custom cursor (desktop mouse only, rendered by CustomCursor). */
+.cursor-dot {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  border-radius: 999px;
+  background: var(--bone);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* College lettering, as on the logo's 08. */
+.varsity {
+  font-family: var(--font-graduate), serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Giant outlined 08 behind sections. */
+.big08 {
+  font-size: clamp(16rem, 42vw, 40rem);
+  line-height: 0.8;
+  z-index: 0;
+}
+.big08 text {
+  font-family: var(--font-graduate), serif;
+  fill: none;
+  stroke: rgb(184 146 62 / 0.16);
+  stroke-width: 0.35;
+}
+
+/* Pinstripe, the logo's shirt field, kept very quiet. */
+.pinstripe {
+  background-color: var(--ink-2);
+  background-image: repeating-linear-gradient(90deg, rgb(239 232 216 / 0.035) 0 1px, transparent 1px 22px);
+}
+
+/* Stitched divider: a run of pesponto with the logo star in the middle. */
+.stitch {
+  border-top: 2px dashed rgb(184 146 62 / 0.45);
+}
+
+/* ---------- Buttons ---------- */
+.btn-gold {
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.9);
+  transition: background-color 200ms ease-out;
+}
+.btn-gold:hover { background: var(--gold-hi); }
+.btn-dark {
+  background: var(--ink);
+  color: var(--bone);
+  transition: background-color 200ms ease-out;
+}
+.btn-dark:hover { background: #262420; }
+
+.btn-outline {
+  color: var(--bone);
+  border: 1px solid rgb(184 146 62 / 0.6);
+  background: rgb(11 11 10 / 0.4);
+  transition: border-color 200ms ease-out, color 200ms ease-out;
+}
+.btn-outline:hover { border-color: var(--gold-hi); color: var(--gold-hi); }
+
+/* Hover: slight lift of the content and a gold sheen sweeping across. */
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 30%, rgb(255 236 190 / 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.sheen .lift { transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+@media (hover: hover) {
+  .sheen:hover::after {
+    transform: translateX(120%);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sheen:hover .lift { transform: translateY(-2px); }
+}
+.btn-outline.sheen::after {
+  background: linear-gradient(100deg, transparent 30%, rgb(212 174 92 / 0.25) 50%, transparent 70%);
+}
+
+.fab {
+  background: var(--wa);
+  color: #fff;
+  box-shadow: 0 14px 30px -8px rgb(0 0 0 / 0.9), 0 4px 12px -4px rgb(0 0 0 / 0.7);
+}
+.fab-label {
+  background: var(--bone);
+  color: var(--ink);
+  box-shadow: 0 10px 24px -8px rgb(0 0 0 / 0.8);
+}
+
+
+.placeholder-slot {
+  color: var(--bone-dim);
+  border: 1px dashed var(--rule);
+  padding: 0.05em 0.4em;
+  border-radius: 3px;
+}
+
+/* ---------- Gallery ---------- */
+.works {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 0.75rem;
+}
+/* Desktop: editorial stagger, four sizes, each tile at or under its photo's width. */
+@media (min-width: 1024px) {
+  .works { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1.5rem; align-items: start; }
+  .works-item:nth-child(1) { grid-column: 1 / 5; }
+  .works-item:nth-child(2) { grid-column: 5 / 8; margin-top: 9rem; }
+  .works-item:nth-child(3) { grid-column: 8 / 11; margin-top: 2.5rem; }
+  .works-item:nth-child(4) { grid-column: 11 / 13; margin-top: 14rem; }
+}
+@media (max-width: 1023px) {
+  .works-item:nth-child(even) { margin-top: 3rem; }
+}
+.works-item { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+.works-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--ink-2);
+  cursor: zoom-in;
+}
+.works-shade {
+  position: absolute;
+  inset: 0;
+  background: rgb(11 11 10 / 0.28);
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .works-thumb:hover .works-shade { opacity: 1; }
+}
+.works-caption {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+.works-reel { display: none; }
+.viewer-btn {
+  background: rgb(239 232 216 / 0.12);
+  color: var(--bone);
+  transition: background-color 150ms ease-out;
+}
+.viewer-btn:hover { background: rgb(239 232 216 / 0.22); }
+
+.map-frame {
+  border: 1px solid rgb(184 146 62 / 0.7);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--ink-2);
+}
+.map-frame iframe { filter: grayscale(1) invert(0.92) contrast(0.9); }
+

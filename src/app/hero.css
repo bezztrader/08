@@ -1,0 +1,169 @@
+/* ---------- Hero: "O corte" ----------
+   Everything here is CSS so it runs from first paint, before hydration.
+   html[data-cut="1"] = first visit of the session (set by an inline script in
+   layout.tsx): the razor intro plays. Later visits get one plain fade.
+   --k scales every time (mobile runs the same sequence about a third faster). */
+:root {
+  --k: 1;
+  --cut-ease: cubic-bezier(0.7, 0, 0.2, 1);
+  --soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (max-width: 767px) {
+  :root { --k: 0.68; }
+}
+
+/* -- overlay: two black halves along the cut, the blade line on top -- */
+.cut-overlay { display: none; }
+html[data-cut="1"] .cut-overlay { display: block; position: fixed; inset: 0; z-index: 90; pointer-events: none; }
+html[data-cut="done"] .cut-overlay { display: none; }
+.cut-half { position: absolute; inset: 0; background: var(--ink); }
+.cut-half-a {
+  clip-path: polygon(0 0, 100% 0, 100% 26%, 0 74%);
+  animation: half-a calc(0.55s * var(--k)) var(--cut-ease) calc(0.42s * var(--k)) both;
+}
+.cut-half-b {
+  clip-path: polygon(0 74%, 100% 26%, 100% 100%, 0 100%);
+  animation: half-b calc(0.55s * var(--k)) var(--cut-ease) calc(0.42s * var(--k)) both;
+}
+@keyframes half-a { to { transform: translate(-3%, -62%); } }
+@keyframes half-b { to { transform: translate(3%, 62%); } }
+@keyframes half-a-flat { to { transform: translateY(-52%); } }
+@keyframes half-b-flat { to { transform: translateY(52%); } }
+
+.cut-line {
+  position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
+  animation: fade-out calc(0.3s * var(--k)) ease-out calc(0.62s * var(--k)) both;
+}
+.cut-line .blade {
+  stroke: var(--gold-hi); stroke-width: 1.5px;
+  stroke-dasharray: 100;
+  animation: draw-line calc(0.5s * var(--k)) var(--cut-ease) both;
+}
+/* the bright tip: a short dash travelling with the blade */
+.cut-line .glint {
+  stroke: #fff4d2; stroke-width: 3px; stroke-linecap: round;
+  stroke-dasharray: 3 300;
+  animation: run-glint calc(0.5s * var(--k)) var(--cut-ease) both;
+}
+@keyframes draw-line { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes run-glint { from { stroke-dashoffset: 3; } to { stroke-dashoffset: -97; } }
+@keyframes fade-out { to { opacity: 0; } }
+.cut-line-flat { display: none; }
+@media (max-width: 767px) {
+  .cut-line-diag { display: none; }
+  .cut-line-flat { display: block; }
+  .cut-half-a { clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%); animation-name: half-a-flat; }
+  .cut-half-b { clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%); animation-name: half-b-flat; }
+}
+
+/* -- title: corte seco, each character rising out of its word mask -- */
+.cut-word {
+  display: inline-block; overflow: hidden; vertical-align: bottom;
+  margin-top: -0.32em; padding: 0.32em 0.2em 0.06em 0;
+}
+.cut-word:last-child { padding-right: 0; }
+.cut-char { display: inline-block; }
+html[data-cut="1"] .cut-char {
+  animation: cut-up calc(0.4s * var(--k)) var(--cut-ease) calc(var(--at) * var(--k) * 1s) both;
+}
+@keyframes cut-up { from { transform: translateY(105%); } }
+
+/* keyword: turns gold last, then one glint sweeps it like light on a blade */
+.kw-gold, .kw-glint { position: absolute; left: 0; bottom: 0; white-space: nowrap; }
+.kw-gold { color: var(--gold); }
+.kw-glint { color: #fff1c8; clip-path: inset(0 100% 0 0); }
+html[data-cut="1"] .kw-gold {
+  animation: fade-in-op calc(0.45s * var(--k)) ease-out calc(var(--at) * var(--k) * 1s) both;
+}
+html[data-cut="1"] .kw-glint {
+  animation: glint-sweep calc(0.55s * var(--k)) ease-in-out calc(var(--at) * var(--k) * 1s) both;
+}
+@keyframes fade-in-op { from { opacity: 0; } }
+@keyframes glint-sweep {
+  from { clip-path: inset(0 100% 0 -30%); }
+  to { clip-path: inset(0 -30% 0 100%); }
+}
+
+/* title halves along the cut line, so the scroll exit can slide them apart */
+.title-top { clip-path: polygon(-5% -20%, 105% -20%, 105% 47%, -5% 57%); }
+.title-bottom { clip-path: polygon(-5% 57%, 105% 47%, 105% 120%, -5% 120%); }
+
+/* -- 08: outline drawn, then the pinstripe fill fades in -- */
+.hero08 { font-size: clamp(16rem, 42vw, 40rem); display: block; }
+.hero08 text { font-family: var(--font-graduate), serif; }
+.h08-stroke { fill: none; stroke: rgb(184 146 62 / 0.3); stroke-width: 0.35; stroke-dasharray: 600; }
+.h08-fill { opacity: 0.55; }
+html[data-cut="1"] .h08-stroke { animation: draw-08 calc(1s * var(--k)) var(--soft) calc(0.5s * var(--k)) both; }
+html[data-cut="1"] .h08-fill { animation: fade-in-op calc(0.6s * var(--k)) ease-out calc(1.4s * var(--k)) both; }
+@keyframes draw-08 { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
+
+/* -- logo + its star -- */
+html[data-cut="1"] .hx-logo {
+  animation: logo-in calc(0.5s * var(--k)) var(--soft) calc(var(--at) * var(--k) * 1s) both;
+}
+@keyframes logo-in { from { opacity: 0; transform: scale(0.92); } }
+.star-glint {
+  position: absolute; left: 50%; top: 24%; width: 8%; margin: -4% 0 0 -4%;
+  fill: #fff1c8; opacity: 0; pointer-events: none;
+}
+html[data-cut="1"] .star-glint {
+  animation: star-blink calc(0.45s * var(--k)) ease-in-out calc(var(--at) * var(--k) * 1s) both;
+}
+@keyframes star-blink {
+  0% { opacity: 0; transform: scale(0.6); }
+  45% { opacity: 0.9; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+/* -- video frame: opened by a diagonal cut, then its gold border is drawn -- */
+html[data-cut="1"] .hx-diag {
+  animation: diag-open calc(0.6s * var(--k)) var(--cut-ease) calc(var(--at) * var(--k) * 1s) both;
+}
+@keyframes diag-open {
+  from { clip-path: polygon(0% 0%, 0% 0%, -60% 100%, -60% 100%); }
+  to { clip-path: polygon(0% 0%, 160% 0%, 100% 100%, -60% 100%); }
+}
+.frame-draw { fill: none; stroke: var(--gold); stroke-width: 1; stroke-dasharray: 1; }
+html[data-cut="1"] .frame-draw {
+  animation: draw-frame calc(0.8s * var(--k)) var(--soft) calc(var(--at) * var(--k) * 1s) both;
+}
+@keyframes draw-frame { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* -- copy and buttons: short fade-up in stagger; CTA ends with one sheen -- */
+html[data-cut="1"] .hx-up {
+  animation: hx-rise calc(0.5s * var(--k)) var(--soft) calc(var(--at) * var(--k) * 1s) both;
+}
+html[data-cut="1"] .hx-fade {
+  animation: fade-in-op calc(0.6s * var(--k)) ease-out calc(var(--at) * var(--k) * 1s) both;
+}
+@keyframes hx-rise { from { opacity: 0; transform: translateY(14px); } }
+html[data-cut="1"] .sheen-once .sheen::after {
+  animation: sheen-pass calc(0.5s * var(--k)) var(--soft) calc(1.7s * var(--k)) both;
+}
+@keyframes sheen-pass { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+
+/* later visits of the session: one plain fade for the hero content */
+html:not([data-cut]) .hero-body { animation: fade-in-op 0.6s ease-out both; }
+
+/* -- ambient details while on the hero -- */
+.pole {
+  position: absolute; left: 1.25rem; top: 28%; width: 10px; height: 40vh;
+  overflow: hidden; border-radius: 6px; border: 1px solid rgb(184 146 62 / 0.5);
+}
+.pole-stripes {
+  position: absolute; left: 0; right: 0; top: -100%; height: 200%;
+  background: repeating-linear-gradient(-45deg, var(--ink) 0 8px, var(--gold) 8px 13px, var(--bone) 13px 18px);
+  animation: pole-turn 7s linear infinite;
+}
+@keyframes pole-turn { to { transform: translateY(50%); } }
+.scroll-cue {
+  position: absolute; left: 50%; bottom: 1.5rem; translate: -50% 0;
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem; color: var(--bone-dim);
+}
+.scroll-cue-line { position: relative; width: 1px; height: 40px; overflow: hidden; background: rgb(239 232 216 / 0.15); }
+.scroll-cue-line > span { position: absolute; inset: 0; background: var(--gold); animation: cue-drop 1.8s var(--soft) infinite; }
+@keyframes cue-drop { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pole-stripes, .scroll-cue-line > span { animation: none; }
+}
